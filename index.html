@@ -1,14 +1,169 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Countdown</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Countdown</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      position: relative;
+    }
+
+    .bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background: url('road.gif') center center / cover no-repeat;
+    }
+
+    .corner-gif {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 120px;
+      height: auto;
+      z-index: 5;
+      cursor: pointer;
+    }
+
+    .corner-gif2 {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 120px;
+      height: auto;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .container {
+      padding: 20px;
+      z-index: 10;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .time {
+      font-size: 3rem;
+      font-weight: bold;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .time.animate {
+      transform: scale(1.1);
+      opacity: 0.7;
+    }
+
+    #secretMessage {
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.6);
+      color: rgb(255, 0, 0);
+      padding: 16px 22px;
+      border-radius: 12px;
+      font-size: 1.4rem;
+      min-width: 200px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 20;
+      pointer-events: none;
+      white-space: pre-wrap;
+    }
+
+    #secretMessage.show {
+      opacity: 1;
+    }
+  </style>
 </head>
+
 <body>
-    Temp
+
+  <div class="bg"></div>
+
+  <img src="heartgif.gif" id="heart" class="corner-gif" />
+
+  <img src="plane.gif" class="corner-gif2" />
+
+
+  <div class="container">
+    <h1>Days until I see you:</h1>
+    <div id="countdown" class="time">--</div>
+  </div>
+
+  <div id="secretMessage"></div>
+
+  <script>
+    const targetDate = new Date('2025-12-30T00:00:00');
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = targetDate - now;
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      const el = document.getElementById('countdown');
+      el.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+      el.classList.add('animate');
+      setTimeout(() => el.classList.remove('animate'), 200);
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    const secretMessageText = "I miss you <3";
+    const secretBox = document.getElementById("secretMessage");
+    let isShowing = false;
+
+    function typeMessage(text) {
+      secretBox.textContent = "";
+      let i = 0;
+      const speed = 50;
+
+      function typeNext() {
+        if (i < text.length) {
+          secretBox.textContent += text.charAt(i);
+          i++;
+          setTimeout(typeNext, speed);
+        }
+      }
+
+      typeNext();
+    }
+
+    document.getElementById('heart').addEventListener('click', () => {
+      isShowing = !isShowing;
+
+      if (isShowing) {
+        secretBox.classList.add('show');
+        typeMessage(secretMessageText);
+      } else {
+        secretBox.classList.remove('show');
+        secretBox.textContent = "";
+      }
+    });
+  </script>
+
 </body>
-<script>
-    setInterval(function() {
-    alert("This is a notification!");
-}, 1000 * 60); // 1 minute in milliseconds
-</script>
-</html>   
+</html>
