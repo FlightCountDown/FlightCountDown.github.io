@@ -110,60 +110,89 @@
 
   <div id="secretMessage"></div>
 
-  <script>
-    const targetDate = new Date('2025-12-30T00:00:00');
+ <script>
+  function getBolognaTarget() {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "Europe/Rome",
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      hour12: false
+    }).formatToParts(new Date("2025-12-31T15:50:00"));
 
-    function updateCountdown() {
-      const now = new Date();
-      const diff = targetDate - now;
+    const lookup = {};
+    for (const p of parts) lookup[p.type] = p.value;
 
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
+    return new Date(
+      Date.UTC(
+        lookup.year,
+        lookup.month - 1,
+        lookup.day,
+        lookup.hour,
+        lookup.minute,
+        lookup.second
+      )
+    );
+  }
 
-      const el = document.getElementById('countdown');
-      el.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  const targetDate = getBolognaTarget();
 
-      el.classList.add('animate');
-      setTimeout(() => el.classList.remove('animate'), 200);
+  function updateCountdown() {
+    const now = new Date();
+    const diff = targetDate - now;
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    const el = document.getElementById('countdown');
+    el.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+    el.classList.add('animate');
+    setTimeout(() => el.classList.remove('animate'), 200);
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  
+  const secretMessageText = "I miss you <3";
+  const secretBox = document.getElementById("secretMessage");
+  let isShowing = false;
+
+  function typeMessage(text) {
+    secretBox.textContent = "";
+    let i = 0;
+    const speed = 50;
+
+    function typeNext() {
+      if (i < text.length) {
+        secretBox.textContent += text.charAt(i);
+        i++;
+        setTimeout(typeNext, speed);
+      }
     }
 
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
+    typeNext();
+  }
 
-    const secretMessageText = "I miss you <3";
-    const secretBox = document.getElementById("secretMessage");
-    let isShowing = false;
+  document.getElementById('heart').addEventListener('click', () => {
+    isShowing = !isShowing;
 
-    function typeMessage(text) {
+    if (isShowing) {
+      secretBox.classList.add('show');
+      typeMessage(secretMessageText);
+    } else {
+      secretBox.classList.remove('show');
       secretBox.textContent = "";
-      let i = 0;
-      const speed = 50;
-
-      function typeNext() {
-        if (i < text.length) {
-          secretBox.textContent += text.charAt(i);
-          i++;
-          setTimeout(typeNext, speed);
-        }
-      }
-
-      typeNext();
     }
+  });
+</script>
 
-    document.getElementById('heart').addEventListener('click', () => {
-      isShowing = !isShowing;
-
-      if (isShowing) {
-        secretBox.classList.add('show');
-        typeMessage(secretMessageText);
-      } else {
-        secretBox.classList.remove('show');
-        secretBox.textContent = "";
-      }
-    });
-  </script>
 
 </body>
 </html>
