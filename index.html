@@ -47,8 +47,8 @@
       right: 10px;
       width: 120px;
       height: auto;
-      z-index: -1;
-      pointer-events: none;
+      z-index: 5;
+      cursor: pointer;
     }
     .container {
       padding: 20px;
@@ -92,8 +92,27 @@
       pointer-events: none;
       white-space: pre-wrap;
     }
-
+    #secretMessage2 {
+      position: absolute;
+      top: 75%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.6);
+      color: rgb(255, 0, 0);
+      padding: 16px 22px;
+      border-radius: 12px;
+      font-size: 1.4rem;
+      min-width: 200px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 20;
+      pointer-events: none;
+      white-space: pre-wrap;
+    }
     #secretMessage.show {
+      opacity: 1;
+    }
+    #secretMessage2.show {
       opacity: 1;
     }
   </style>
@@ -105,7 +124,7 @@
 
   <img src="heartgif.gif" id="heart" class="corner-gif" />
 
-  <img src="plane.gif" class="corner-gif2" />
+  <img src="plane.gif" id = "plane" class="corner-gif2" />
 
 
   <div class="container">
@@ -114,6 +133,7 @@
   </div>
 
   <div id="secretMessage"></div>
+  <div id="secretMessage2"></div>
 
   <div class="music">
     <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/vKJhzL16woE?si=ZQZM77ilyD2lw0tz&amp;start=30" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
@@ -170,8 +190,11 @@
 
   
   const secretMessageText = "I miss you <3";
+  const secretMessage2Text = "I love you Rose";
   const secretBox = document.getElementById("secretMessage");
+  const secretBox2 = document.getElementById("secretMessage2");
   let isShowing = false;
+  let isShowing2 = false;
 
   function typeMessage(text) {
     secretBox.textContent = "";
@@ -188,6 +211,21 @@
 
     typeNext();
   }
+  function typeMessage2(text) {
+    secretBox2.textContent = "";
+    let i = 0;
+    const speed = 50;
+
+    function typeNext() {
+      if (i < text.length) {
+        secretBox2.textContent += text.charAt(i);
+        i++;
+        setTimeout(typeNext, speed);
+      }
+    }
+
+    typeNext();
+  }
 
   document.getElementById('heart').addEventListener('click', () => {
     isShowing = !isShowing;
@@ -195,10 +233,27 @@
     if (isShowing) {
       secretBox.classList.add('show');
       typeMessage(secretMessageText);
-    } else {
+    } 
+    
+    else {
       secretBox.classList.remove('show');
       secretBox.textContent = "";
     }
+
+  });
+  document.getElementById('plane').addEventListener('click', () => {
+    isShowing2 = !isShowing2;
+
+    if (isShowing2) {
+      secretBox2.classList.add('show');
+      typeMessage2(secretMessage2Text);
+    } 
+    
+    else {
+      secretBox2.classList.remove('show');
+      secretBox2.textContent = "";
+    }
+
   });
 </script>
 
