@@ -1,262 +1,314 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>Countdown</title>
-
   <style>
     body {
       margin: 0;
-      padding: 0;
       overflow: hidden;
-      color: white;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-      position: relative;
+      background: #000;
+      font-family: 'Courier New', monospace;
+      color: #d0ffd0;
     }
-
-    .bg {
+    #info {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -2;
-      background: url('road.gif') center center / cover no-repeat;
-    }
-
-    .corner-gif {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 120px;
-      height: auto;
-      z-index: 5;
-      cursor: pointer;
-    }
-
-    .corner-gif2 {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 120px;
-      height: auto;
-      z-index: 5;
-      cursor: pointer;
-    }
-    .container {
-      padding: 20px;
+      top: 16px;
+      left: 16px;
       z-index: 10;
-    }
-    .music {
-      padding: 20px;
-      z-index: 11;
-    }
-
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-    }
-
-    .time {
-      font-size: 8vw;
-      font-weight: bold;
-      transition: transform 0.2s ease, opacity 0.2s ease;
-    }
-
-    .time.animate {
-      transform: scale(1.1);
+      text-shadow: 0 0 6px #7fff7f;
+      font-size: 11px;
+      line-height: 1.6;
       opacity: 0.7;
+      letter-spacing: 1px;
     }
-
-    #secretMessage {
+    #countdown {
       position: absolute;
-      top: 55%;
+      top: 20px;
       left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(0,0,0,0.6);
-      color: rgb(255, 0, 0);
-      padding: 16px 22px;
-      border-radius: 12px;
-      font-size: 1.4rem;
-      min-width: 200px;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-      z-index: 20;
+      transform: translateX(-50%);
+      z-index: 10;
+      color: #ffffff;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      letter-spacing: 2px;
       pointer-events: none;
-      white-space: pre-wrap;
+      user-select: none;
     }
-    #secretMessage2 {
+    #countdown .label {
+      font-size: 10px;
+      opacity: 0.7;
+      letter-spacing: 4px;
+      margin-bottom: 6px;
+    }
+    #countdown .time {
+      font-size: 30px;
+      letter-spacing: 3px;
+    }
+    #countdown .unit {
+      font-size: 12px;
+      opacity: 0.6;
+      letter-spacing: 2px;
+      margin-top: 4px;
+    }
+    #countdown .time span {
+      display: inline-block;
+      min-width: 2.2ch;
+      text-align: center;
+    }
+    #countdown .text {
+      font-size: 30px;
+      letter-spacing: 3px;
+    }
+    #crt-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      background:
+        radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.85) 100%),
+        repeating-linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0) 0px,
+          rgba(0, 0, 0, 0) 2px,
+          rgba(0, 0, 0, 0.35) 3px,
+          rgba(0, 0, 0, 0.35) 3px
+        );
+      mix-blend-mode: multiply;
+    }
+    #crt-overlay::after {
+      content: '';
       position: absolute;
-      top: 75%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(0,0,0,0.6);
-      color: rgb(255, 0, 0);
-      padding: 16px 22px;
-      border-radius: 12px;
-      font-size: 1.4rem;
-      min-width: 200px;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-      z-index: 20;
-      pointer-events: none;
-      white-space: pre-wrap;
+      inset: 0;
+      background: rgba(180, 255, 180, 0.02);
+      animation: flicker 0.15s infinite;
     }
-    #secretMessage.show {
-      opacity: 1;
-    }
-    #secretMessage2.show {
-      opacity: 1;
+    @keyframes flicker {
+      0%   { opacity: 0.9; }
+      50%  { opacity: 1; }
+      100% { opacity: 0.95; }
     }
   </style>
 </head>
-
 <body>
-
-  <div class="bg"></div>
-
-  <img src="heartgif.gif" id="heart" class="corner-gif" />
-
-  <img src="plane.gif" id = "plane" class="corner-gif2" />
-
-
-  <div class="container">
-    <h1>Days until I see you:</h1>
-    <div id="countdown" class="time">--</div>
+  <div id="countdown">
+    <div class="time">
+      <span id="cd-days">00</span>:<span id="cd-hours">00</span>:<span id="cd-minutes">00</span>:<span id="cd-seconds">00</span>
+    </div>
+    <div class="unit">DAYS &nbsp;&nbsp; HOURS &nbsp;&nbsp; MINS &nbsp;&nbsp; SECS</div>
+    <div></div>
+    <div class="text"> Until I see you :) </div>
   </div>
 
-  <div id="secretMessage"></div>
-  <div id="secretMessage2"></div>
+  <div id="crt-overlay"></div>
 
-  <div class="music">
-    <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/vKJhzL16woE?si=ZQZM77ilyD2lw0tz&amp;start=30" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-  </div>
+  <script src="./model.js"></script>
+  <script src="./model2.js"></script>
+  <script src="./plane.js"></script>
 
- <script>
-  function getBolognaTarget() {
-    const parts = new Intl.DateTimeFormat("en-US", {
-      timeZone: "America/Chicago",
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      second: "numeric",
-      hour12: false
-    }).formatToParts(new Date("2026-04-01T15:50:00"));
-
-    const lookup = {};
-    for (const p of parts) lookup[p.type] = p.value;
-
-    return new Date(
-      Date.UTC(
-        lookup.year,
-        lookup.month - 1,
-        lookup.day,
-        lookup.hour,
-        lookup.minute,
-        lookup.second
-      )
-    );
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
   }
+  </script>
 
-  const targetDate = getBolognaTarget();
+  <script type="module">
+    import * as THREE from 'three';
+    import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+    import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+    import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
-  function updateCountdown() {
-    const now = new Date();
-    const diff = targetDate - now;
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
 
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((diff / (1000 * 60)) % 60);
-    const seconds = Math.floor((diff / 1000) % 60);
+    const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 2000);
+    camera.position.set(0, 0, 5);
 
-    const el = document.getElementById('countdown');
-    el.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    document.body.appendChild(renderer.domElement);
 
-    el.classList.add('animate');
-    setTimeout(() => el.classList.remove('animate'), 200);
-  }
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
 
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
+    const composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    composer.addPass(new UnrealBloomPass(
+      new THREE.Vector2(innerWidth, innerHeight),
+      0.3, 0.6, 0.05
+    ));
 
-  
-  const secretMessageText = "I miss you <3";
-  const secretMessage2Text = "I love you Rose";
-  const secretBox = document.getElementById("secretMessage");
-  const secretBox2 = document.getElementById("secretMessage2");
-  let isShowing = false;
-  let isShowing2 = false;
+    const chromaticAberration = {
+      uniforms: { tDiffuse: { value: null }, amount: { value: 0.0018 } },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+      `,
+      fragmentShader: `
+        uniform sampler2D tDiffuse;
+        uniform float amount;
+        varying vec2 vUv;
+        void main() {
+          vec2 offset = (vUv - 0.5) * amount;
+          float r = texture2D(tDiffuse, vUv + offset).r;
+          float g = texture2D(tDiffuse, vUv).g;
+          float b = texture2D(tDiffuse, vUv - offset).b;
+          gl_FragColor = vec4(r, g, b, 1.0);
+        }
+      `
+    };
+    composer.addPass(new ShaderPass(chromaticAberration));
+    composer.addPass(new OutputPass());
 
-  function typeMessage(text) {
-    secretBox.textContent = "";
-    let i = 0;
-    const speed = 50;
+    // All spinners get rotated in the animate loop.
+    const modelGroups = [];
 
-    function typeNext() {
-      if (i < text.length) {
-        secretBox.textContent += text.charAt(i);
-        i++;
-        setTimeout(typeNext, speed);
+    function makeCRTModel(obj) {
+      // Inner group holds the actual meshes + wireframes.
+      const group = new THREE.Group();
+      obj.traverse((child) => {
+        if (child.isMesh && child.geometry) {
+          const fill = new THREE.Mesh(
+            child.geometry,
+            new THREE.MeshBasicMaterial({
+              color: 0x000000,
+              polygonOffset: true,
+              polygonOffsetFactor: 1,
+              polygonOffsetUnits: 1
+            })
+          );
+          fill.position.copy(child.position);
+          fill.rotation.copy(child.rotation);
+          fill.scale.copy(child.scale);
+
+          const edges = new THREE.EdgesGeometry(child.geometry, 20);
+          const lines = new THREE.LineSegments(
+            edges,
+            new THREE.LineBasicMaterial({ color: 0xffffff })
+          );
+          lines.position.copy(child.position);
+          lines.rotation.copy(child.rotation);
+          lines.scale.copy(child.scale);
+
+          group.add(fill);
+          group.add(lines);
+        }
+      });
+
+
+      const box = new THREE.Box3().setFromObject(group);
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3()).length();
+      group.children.forEach(child => child.position.sub(center));
+
+      group.rotation.z = -Math.PI / 4;
+
+      const spinner = new THREE.Group();
+      spinner.add(group);
+
+      const tiltWrapper = new THREE.Group();
+      tiltWrapper.rotation.z = Math.PI / 4;
+      tiltWrapper.add(spinner);
+
+      modelGroups.push(spinner);
+
+      return { wrapper: tiltWrapper, size };
+    }
+
+    if (!window.OBJ_DATA || !window.OBJ_DATA_2 || !window.OBJ_DATA_3) {
+      document.body.insertAdjacentHTML('beforeend',
+        '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#ff5555;text-shadow:0 0 6px #ff5555;z-index:10;">ERROR: model.js / model2.js not found or OBJ_DATA not defined</div>'
+      );
+    } else {
+      const obj1 = new OBJLoader().parse(window.OBJ_DATA);
+      const obj2 = new OBJLoader().parse(window.OBJ_DATA_2);
+      const obj3 = new OBJLoader().parse(window.OBJ_DATA_3);
+
+      const m1 = makeCRTModel(obj1);
+      const m2 = makeCRTModel(obj2);
+      const m3 = makeCRTModel(obj3);
+      const m4 = makeCRTModel(obj3);
+
+      const maxSize = Math.max(m1.size, m2.size);
+      const spacing = maxSize * 0.6;
+      m1.wrapper.position.y = spacing;
+      m2.wrapper.position.y =  -spacing;
+      m3.wrapper.position.x = 2*spacing;
+      m3.wrapper.scale.set(0.1,0.1,0.1);
+      m4.wrapper.position.x = -2*spacing;
+      m4.wrapper.scale.set(0.1,0.1,0.1);
+
+      scene.add(m1.wrapper);
+      scene.add(m2.wrapper);
+      scene.add(m3.wrapper);
+      scene.add(m4.wrapper);
+
+      // Frame camera on both models together.
+      const totalWidth = spacing * 2 + maxSize;
+      camera.position.set(0, maxSize * 0.3, totalWidth * 1.1);
+      camera.lookAt(0, 0, 0);
+      controls.target.set(0, 0, 0);
+      controls.update();
+    }
+
+    // Countdown to Aug 15, 2026 @ 1:00 PM EST (UTC-5)
+    const TARGET = new Date('2026-08-15T13:00:00-05:00').getTime();
+    const cdDays    = document.getElementById('cd-days');
+    const cdHours   = document.getElementById('cd-hours');
+    const cdMinutes = document.getElementById('cd-minutes');
+    const cdSeconds = document.getElementById('cd-seconds');
+    const pad = (n) => String(Math.max(0, n)).padStart(2, '0');
+
+    function updateCountdown() {
+      const diff = TARGET - Date.now();
+      if (diff <= 0) {
+        cdDays.textContent = '00';
+        cdHours.textContent = '00';
+        cdMinutes.textContent = '00';
+        cdSeconds.textContent = '00';
+        return;
       }
+      const s = Math.floor(diff / 1000);
+      const days    = Math.floor(s / 86400);
+      const hours   = Math.floor((s % 86400) / 3600);
+      const minutes = Math.floor((s % 3600) / 60);
+      const seconds = s % 60;
+      cdDays.textContent    = pad(days);
+      cdHours.textContent   = pad(hours);
+      cdMinutes.textContent = pad(minutes);
+      cdSeconds.textContent = pad(seconds);
     }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
 
-    typeNext();
-  }
-  function typeMessage2(text) {
-    secretBox2.textContent = "";
-    let i = 0;
-    const speed = 50;
+    // Render loop with continuous model rotation
+    const clock = new THREE.Clock();
+    const ROT_SPEED = 0.8; // radians per second
 
-    function typeNext() {
-      if (i < text.length) {
-        secretBox2.textContent += text.charAt(i);
-        i++;
-        setTimeout(typeNext, speed);
-      }
+    function animate() {
+      requestAnimationFrame(animate);
+      const dt = clock.getDelta();
+      modelGroups.forEach(m => { m.rotation.x += ROT_SPEED * dt; });
+      controls.update();
+      composer.render();
     }
+    animate();
 
-    typeNext();
-  }
-
-  document.getElementById('heart').addEventListener('click', () => {
-    isShowing = !isShowing;
-
-    if (isShowing) {
-      secretBox.classList.add('show');
-      typeMessage(secretMessageText);
-    } 
-    
-    else {
-      secretBox.classList.remove('show');
-      secretBox.textContent = "";
-    }
-
-  });
-  document.getElementById('plane').addEventListener('click', () => {
-    isShowing2 = !isShowing2;
-
-    if (isShowing2) {
-      secretBox2.classList.add('show');
-      typeMessage2(secretMessage2Text);
-    } 
-    
-    else {
-      secretBox2.classList.remove('show');
-      secretBox2.textContent = "";
-    }
-
-  });
-</script>
-
-
+    addEventListener('resize', () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+      composer.setSize(innerWidth, innerHeight);
+    });
+  </script>
 </body>
 </html>
